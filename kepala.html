@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kepala Lemah Checker</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f0f2f5; max-width: 600px; margin: auto; }
+    h1 { text-align: center; color: #333; }
+    label { display: block; margin-top: 15px; font-weight: bold; }
+    input[type="text"] {
+      padding: 8px; width: 100%; max-width: 300px; font-size: 16px;
+      border: 1px solid #ccc; border-radius: 5px;
+    }
+    button {
+      margin-top: 20px; padding: 10px 20px; background-color: #007bff;
+      color: white; border: none; border-radius: 5px; cursor: pointer;
+    }
+    button:hover { background-color: #0056b3; }
+    .result {
+      margin-top: 25px; background: white; padding: 15px;
+      border-radius: 8px; box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    .rumus { margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+
+  <h1>Kepala Lemah - Cek Potensi</h1>
+
+  <label for="angka4">Masukkan 4D Hari Ini (misal: 2341):</label>
+  <input type="text" id="angka4" maxlength="4">
+
+  <label for="angka4kemarin">Masukkan 4D Kemarin (misal: 0057):</label>
+  <input type="text" id="angka4kemarin" maxlength="4">
+
+  <button onclick="hitungKepalaLemah()">Hitung Kepala Lemah</button>
+
+  <div class="result" id="output"></div>
+
+  <script>
+    function hitungKepalaLemah() {
+      const hariIni = document.getElementById("angka4").value;
+      const kemarin = document.getElementById("angka4kemarin").value;
+
+      if (hariIni.length !== 4 || kemarin.length !== 4) {
+        document.getElementById("output").innerHTML = "<b>Masukkan kedua angka 4D dengan benar.</b>";
+        return;
+      }
+
+      const as = parseInt(hariIni[0]);
+      const kop = parseInt(hariIni[1]);
+      const ekor = parseInt(hariIni[3]);
+      const asKemarin = parseInt(kemarin[0]);
+
+      const r1 = (as + kop) % 10;
+      const r2 = (as + asKemarin) % 10;
+      const r3 = (as + ekor) % 10;
+
+      const hasil = `
+        <div class="rumus"><b>Rumus 1:</b> AS + KOP = ${as} + ${kop} = <b>${r1}</b> → Kepala lemah</div>
+        <div class="rumus"><b>Rumus 2:</b> AS Hari Ini + AS Kemarin = ${as} + ${asKemarin} = <b>${r2}</b> → Kepala lemah</div>
+        <div class="rumus"><b>Rumus 3:</b> AS + EKOR = ${as} + ${ekor} = <b>${r3}</b> → Kepala lemah</div>
+      `;
+
+      document.getElementById("output").innerHTML = hasil;
+    }
+  </script>
+
+</body>
+</html>
