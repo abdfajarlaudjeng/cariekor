@@ -8,7 +8,7 @@
     body { font-family: Arial, sans-serif; padding: 20px; background: #eef2f5; max-width: 700px; margin: auto; }
     h1, h2 { text-align: center; color: #333; }
     label { display: block; margin-top: 10px; font-weight: bold; }
-    input[type="text"] {
+    input, select {
       padding: 8px; width: 100%; max-width: 300px; font-size: 16px;
       border: 1px solid #ccc; border-radius: 5px;
     }
@@ -28,6 +28,15 @@
 <body>
 
   <h1>Analisis Angka Lemah</h1>
+
+  <label for="pasaran">Pasaran:</label>
+  <select id="pasaran">
+    <option value="Hongkong">Hongkong</option>
+    <option value="Singapore">Singapore</option>
+    <option value="Sydney">Sydney</option>
+    <option value="Cambodia">Cambodia</option>
+    <option value="Taiwan">Taiwan</option>
+  </select>
 
   <label for="duaD">2D (misal: 67):</label>
   <input type="text" id="duaD" maxlength="2">
@@ -54,12 +63,13 @@
   <div class="result section" id="hasilKepala"></div>
 
   <script>
-    const indexAngka = [9,8,7,6,5,4,3,2,1,0]; // index angka 0–9
-    const webAppURL = "https://script.google.com/macros/s/AKfycbxuBdHM0Jptmal3fZyHjGg6AveivCAt0griUCwm0hQdop_Me_OxhEz5dghNkHhdrihzmw/exec"; // GANTI DI SINI
+    const indexAngka = [9,8,7,6,5,4,3,2,1,0];
+    const webAppURL = "https://script.google.com/macros/s/AKfycbwBIyd2XYZGw0fMe7Y5KLzczLO53ba0klNMn8aGLh_xKSyw1LGorYSHE8sESc_fCJSa3w/exec";
 
-    let hasilData = {}; // disimpan global untuk dikirim
+    let hasilData = {};
 
     function hitungSemua() {
+      const pasaran = document.getElementById("pasaran").value;
       const duaD = document.getElementById("duaD").value;
       const angka3 = document.getElementById("angka3").value;
       const ekor1 = parseInt(document.getElementById("ekorSebelumnya").value);
@@ -73,7 +83,6 @@
         return;
       }
 
-      // Rumus Ekor Lemah
       const d1 = parseInt(duaD[0]);
       const d2 = parseInt(duaD[1]);
       const jml2D = d1 + d2;
@@ -87,7 +96,6 @@
       const r5 = (ekor1 + ekor2) % 10;
       const r6 = (as + kop + kepala - 1 + 10) % 10;
 
-      // Rumus Kepala Lemah
       const as4 = parseInt(angka4[0]);
       const kop4 = parseInt(angka4[1]);
       const ekor4 = parseInt(angka4[3]);
@@ -96,7 +104,6 @@
       const k2 = (as4 + asKemarin) % 10;
       const k3 = (as4 + ekor4) % 10;
 
-      // Tampilkan
       document.getElementById("hasilEkor").innerHTML = `
         <h2>Hasil Ekor Lemah</h2>
         <div class="rumus">Rumus 1: <b>${r1}</b></div>
@@ -113,7 +120,12 @@
         <div class="rumus">Rumus 3: <b>${k3}</b></div>
       `;
 
-      hasilData = { duaD, angka3, ekor1, ekor2, r1, r2, r3, r4, r5, r6, angka4, angka4kemarin, k1, k2, k3 };
+      hasilData = {
+        pasaran, duaD, angka3, ekor1, ekor2,
+        r1, r2, r3, r4, r5, r6,
+        angka4, angka4kemarin, k1, k2, k3,
+        tanggal: new Date().toLocaleDateString("id-ID")
+      };
     }
 
     function kirimSpreadsheet() {
@@ -128,7 +140,12 @@
         headers: { "Content-Type": "application/json" }
       })
       .then(res => res.text())
-      .then(msg => alert("Data berhasil disimpan ke Spreadsheet."))
+      .then(msg => {
+        alert("✅ Data berhasil disimpan ke Spreadsheet!");
+        document.querySelectorAll("input").forEach(i => i.value = "");
+        document.getElementById("hasilEkor").innerHTML = "";
+        document.getElementById("hasilKepala").innerHTML = "";
+      })
       .catch(err => alert("Gagal menyimpan: " + err));
     }
   </script>
