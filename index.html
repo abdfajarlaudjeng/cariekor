@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Nomor Buntut - Pencari Ekor Lemah</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+    h1 { text-align: center; color: #333; }
+    label, input, button { display: block; margin: 10px 0; font-size: 16px; }
+    .result { margin-top: 20px; background: #fff; padding: 15px; border-radius: 8px; }
+    .rumus { margin-bottom: 10px; }
+    input[type="text"] { padding: 8px; width: 100%; max-width: 300px; }
+    button { padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    button:hover { background-color: #0056b3; }
+  </style>
+</head>
+<body>
+  <h1>Nomor Buntut - Cari Ekor Lemah</h1>
+
+  <label for="duaD">Masukkan 2D (misal: 67):</label>
+  <input type="text" id="duaD" maxlength="2">
+
+  <label for="angka3">Masukkan 3D lengkap (misal: 186):</label>
+  <input type="text" id="angka3" maxlength="3">
+
+  <label for="sebelum">Ekor Sebelumnya (misal: 7):</label>
+  <input type="text" id="ekorSebelumnya" maxlength="1">
+
+  <label for="hariIni">Ekor Hari Ini (misal: 4):</label>
+  <input type="text" id="ekorHariIni" maxlength="1">
+
+  <button onclick="hitungEkorLemah()">Hitung Ekor Lemah</button>
+
+  <div class="result" id="output"></div>
+
+  <script>
+    const indexAngka = [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]; // index angka 0–9
+
+    function hitungEkorLemah() {
+      const duaD = document.getElementById("duaD").value;
+      const angka3 = document.getElementById("angka3").value;
+      const ekor1 = parseInt(document.getElementById("ekorSebelumnya").value);
+      const ekor2 = parseInt(document.getElementById("ekorHariIni").value);
+      let hasil = "";
+
+      if (duaD.length !== 2 || angka3.length !== 3 || isNaN(ekor1) || isNaN(ekor2)) {
+        document.getElementById("output").innerHTML = "<b>Mohon isi semua input dengan benar!</b>";
+        return;
+      }
+
+      const d1 = parseInt(duaD[0]);
+      const d2 = parseInt(duaD[1]);
+      const jml2D = d1 + d2;
+
+      // Rumus 1
+      const r1 = jml2D - 1;
+
+      // Rumus 2
+      const r2 = (jml2D % 10) + 2; // jumlah tessyen 2 (ditambahkan 2)
+
+      // Rumus 3
+      const r3 = indexAngka[jml2D % 10];
+
+      // Rumus 4
+      const as = parseInt(angka3[0]);
+      const r4 = indexAngka[as];
+
+      // Rumus 5
+      const r5 = (ekor1 + ekor2) % 10;
+
+      // Rumus 6
+      const kop = parseInt(angka3[1]);
+      const kepala = parseInt(angka3[2]);
+      const r6 = (as + kop + kepala - 1 + 10) % 10;
+
+      hasil += `<div class="rumus"><b>Rumus 1:</b> Jumlah 2D - 1 = ${jml2D} - 1 = <b>${r1}</b></div>`;
+      hasil += `<div class="rumus"><b>Rumus 2:</b> Jumlah tessyen 2 = (Jumlah % 10 + 2) = <b>${r2 % 10}</b></div>`;
+      hasil += `<div class="rumus"><b>Rumus 3:</b> Index dari jumlah 2D (${jml2D % 10}) = <b>${r3}</b></div>`;
+      hasil += `<div class="rumus"><b>Rumus 4:</b> Index dari AS (${as}) = <b>${r4}</b></div>`;
+      hasil += `<div class="rumus"><b>Rumus 5:</b> Ekor + Ekor = ${ekor1} + ${ekor2} = <b>${r5}</b></div>`;
+      hasil += `<div class="rumus"><b>Rumus 6:</b> AS + KOP + KEPALA - 1 = ${as}+${kop}+${kepala}-1 = <b>${r6}</b></div>`;
+
+      document.getElementById("output").innerHTML = hasil;
+    }
+  </script>
+</body>
+</html>
