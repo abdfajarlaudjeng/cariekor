@@ -58,7 +58,7 @@
 
   <script>
     const indexAngka = [9,8,7,6,5,4,3,2,1,0];
-    const webAppURL = "https://script.google.com/macros/s/AKfycbyrJM91V9_shx7RlVnJYv7b83M87pT_e-dZvP_c0oGqENKsX_k9U9Bb2qbkfhXQubJziA/exec";
+    const webAppURL = "https://script.google.com/macros/s/AKfycbxvec15MithHXHlVDTZTel1DEjSyJfy-PsdhQZTR-W8K2N1oJL6tGWKEIQLpYashfzRAA/exec";
 
     let hasilData = {};
 
@@ -117,6 +117,13 @@
       hasilData = { tanggal, pasaran, duaD, angka3, ekor1, ekor2, r1, r2, r3, r4, r5, r6, angka4, angka4kemarin, k1, k2, k3 };
     }
 
+    function resetForm() {
+      document.querySelectorAll("input").forEach(i => i.value = "");
+      document.getElementById("hasilEkor").innerHTML = "";
+      document.getElementById("hasilKepala").innerHTML = "";
+      hasilData = {};
+    }
+
     function kirimSpreadsheet() {
       if (!hasilData.pasaran) {
         alert("Hitung dulu sebelum menyimpan.");
@@ -129,7 +136,10 @@
         body: JSON.stringify(hasilData)
       })
       .then(res => res.text())
-      .then(msg => alert("✅ Data berhasil disimpan ke Spreadsheet: " + msg))
+      .then(msg => {
+        alert("✅ Data berhasil disimpan.");
+        resetForm();
+      })
       .catch(err => alert("❌ Gagal menyimpan: " + err));
     }
   </script>
