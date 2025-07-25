@@ -8,7 +8,7 @@
     body { font-family: Arial, sans-serif; padding: 20px; background: #eef2f5; max-width: 700px; margin: auto; }
     h1, h2 { text-align: center; color: #333; }
     label { display: block; margin-top: 10px; font-weight: bold; }
-    input, select {
+    input[type="text"] {
       padding: 8px; width: 100%; max-width: 300px; font-size: 16px;
       border: 1px solid #ccc; border-radius: 5px;
     }
@@ -29,14 +29,8 @@
 
   <h1>Analisis Angka Lemah</h1>
 
-  <label for="pasaran">Pasaran:</label>
-  <select id="pasaran">
-    <option value="Hongkong">Hongkong</option>
-    <option value="Singapore">Singapore</option>
-    <option value="Sydney">Sydney</option>
-    <option value="Cambodia">Cambodia</option>
-    <option value="Taiwan">Taiwan</option>
-  </select>
+  <label for="pasaran">Pasaran (misal: Hongkong):</label>
+  <input type="text" id="pasaran">
 
   <label for="duaD">2D (misal: 67):</label>
   <input type="text" id="duaD" maxlength="2">
@@ -64,27 +58,27 @@
 
   <script>
     const indexAngka = [9,8,7,6,5,4,3,2,1,0];
-    const webAppURL = "https://script.google.com/macros/s/AKfycbwDhNP1FXMc51sSlLJ7JtbJ9LgI94KMY3EL-Z9y0TkQkLN7y_YV8GM7Zu_3H7jtoQUhJw/exec";
+    const webAppURL = "https://script.google.com/macros/s/AKfycbyrJM91V9_shx7RlVnJYv7b83M87pT_e-dZvP_c0oGqENKsX_k9U9Bb2qbkfhXQubJziA/exec";
 
     let hasilData = {};
 
     function hitungSemua() {
-      const pasaran = document.getElementById("pasaran").value;
+      const pasaran = document.getElementById("pasaran").value.trim();
       const duaD = document.getElementById("duaD").value;
       const angka3 = document.getElementById("angka3").value;
       const ekor1 = parseInt(document.getElementById("ekorSebelumnya").value);
       const ekor2 = parseInt(document.getElementById("ekorHariIni").value);
       const angka4 = document.getElementById("angka4").value;
       const angka4kemarin = document.getElementById("angka4kemarin").value;
+      const tanggal = new Date().toLocaleDateString("id-ID");
 
-      if (duaD.length !== 2 || angka3.length !== 3 || angka4.length !== 4 || angka4kemarin.length !== 4 ||
+      if (!pasaran || duaD.length !== 2 || angka3.length !== 3 || angka4.length !== 4 || angka4kemarin.length !== 4 ||
           isNaN(ekor1) || isNaN(ekor2)) {
         alert("Isi semua input dengan benar.");
         return;
       }
 
-      const d1 = parseInt(duaD[0]);
-      const d2 = parseInt(duaD[1]);
+      const d1 = parseInt(duaD[0]), d2 = parseInt(duaD[1]);
       const jml2D = d1 + d2;
       const r1 = jml2D - 1;
       const r2 = (jml2D % 10 + 2) % 10;
@@ -120,33 +114,23 @@
         <div class="rumus">Rumus 3: <b>${k3}</b></div>
       `;
 
-      hasilData = {
-        pasaran, duaD, angka3, ekor1, ekor2,
-        r1, r2, r3, r4, r5, r6,
-        angka4, angka4kemarin, k1, k2, k3,
-        tanggal: new Date().toLocaleDateString("id-ID")
-      };
+      hasilData = { tanggal, pasaran, duaD, angka3, ekor1, ekor2, r1, r2, r3, r4, r5, r6, angka4, angka4kemarin, k1, k2, k3 };
     }
 
     function kirimSpreadsheet() {
-      if (!hasilData.duaD) {
+      if (!hasilData.pasaran) {
         alert("Hitung dulu sebelum menyimpan.");
         return;
       }
 
       fetch(webAppURL, {
         method: "POST",
-        body: JSON.stringify(hasilData),
-        headers: { "Content-Type": "application/json" }
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(hasilData)
       })
       .then(res => res.text())
-      .then(msg => {
-        alert("✅ Data berhasil disimpan ke Spreadsheet!");
-        document.querySelectorAll("input").forEach(i => i.value = "");
-        document.getElementById("hasilEkor").innerHTML = "";
-        document.getElementById("hasilKepala").innerHTML = "";
-      })
-      .catch(err => alert("Gagal menyimpan: " + err));
+      .then(msg => alert("✅ Data berhasil disimpan ke Spreadsheet: " + msg))
+      .catch(err => alert("❌ Gagal menyimpan: " + err));
     }
   </script>
 
